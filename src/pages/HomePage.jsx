@@ -11,13 +11,7 @@ export default function HomePage() {
           <p className="text-sm text-slate-500">
             Select a lead list to start calling
           </p>
-          <Link
-            to="/admin"
-            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
-          >
-            <LayoutDashboard className="w-4 h-4" />
-            <span className="hidden sm:inline">Dashboard</span>
-          </Link>
+         
         </div>
       </Header>
 

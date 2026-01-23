@@ -22,13 +22,7 @@ export default function LeadSourcePage() {
           <p className="text-slate-500 mb-6">
             The lead list "{slug}" doesn't exist.
           </p>
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--color-brand-orange)] text-white font-medium hover:opacity-90 transition-opacity"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
-          </Link>
+          
         </div>
       </div>
     );

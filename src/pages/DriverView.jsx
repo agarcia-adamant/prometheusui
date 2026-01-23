@@ -37,12 +37,7 @@ export default function DriverView() {
     <div className="min-h-screen bg-slate-50/50">
       <Header>
         <div className="flex items-center gap-2 mb-3">
-          <Link 
-            to="/" 
-            className="p-1.5 -ml-1.5 rounded-lg hover:bg-slate-100 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-slate-500" />
-          </Link>
+          
           {routeName && (
             <h2 className="text-lg font-semibold text-slate-700">{routeName}</h2>
           )}
