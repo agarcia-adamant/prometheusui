@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Phone, PhoneCall, Calendar, Users, Trash2, Search } from 'lucide-react';
-import { leads } from '../data/leads';
 import { useCallTracking } from '../context/CallTrackingContext';
+import { useLeads } from '../context/LeadsContext';
 import { formatPhone, formatRelativeTime } from '../utils/formatters';
 import Header from '../components/shared/Header';
 import SearchBar from '../components/shared/SearchBar';
@@ -10,9 +10,16 @@ import StatCard from '../components/shared/StatCard';
 export default function AdminPortal() {
   const [searchQuery, setSearchQuery] = useState('');
   const [view, setView] = useState('all'); // 'all', 'called', 'uncalled'
-  const { callHistory, getStats, hasBeenCalled, getCallInfo, clearHistory } = useCallTracking();
+  const { getStats, hasBeenCalled, getCallInfo, clearHistory } = useCallTracking();
+  const { leads, batchName, isLoading, error, sourceFile } = useLeads();
   
   const stats = getStats();
+  const callsPerHour = stats.activeHours > 0
+    ? stats.totalCalls / stats.activeHours
+    : stats.totalCalls;
+  const contactRate = leads.length
+    ? Math.round((stats.uniqueLeadsCalled / leads.length) * 100)
+    : 0;
 
   const filteredLeads = useMemo(() => {
     let filtered = leads;
@@ -28,14 +35,15 @@ export default function AdminPortal() {
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter(lead =>
-        lead.name.toLowerCase().includes(q) ||
-        lead.phone.includes(q) ||
-        lead.address.toLowerCase().includes(q)
+        lead.name?.toLowerCase().includes(q) ||
+        lead.phone?.includes(q) ||
+        lead.phoneDisplay?.includes(q) ||
+        lead.address?.toLowerCase().includes(q)
       );
     }
     
     return filtered;
-  }, [searchQuery, view, callHistory]);
+  }, [leads, searchQuery, view, hasBeenCalled]);
 
   const handleClearHistory = () => {
     if (window.confirm('Are you sure you want to clear all call history? This cannot be undone.')) {
@@ -54,6 +62,21 @@ export default function AdminPortal() {
       </Header>
 
       <main className="px-3 sm:px-4 md:px-6 py-4 safe-area-bottom pb-8 max-w-5xl mx-auto">
+        {batchName && (
+          <p className="text-xs font-medium text-slate-400 mb-3 truncate">
+            {batchName}
+          </p>
+        )}
+        {error && (
+          <div className="mb-3 text-xs text-red-600">
+            {error}
+          </div>
+        )}
+        {!error && !isLoading && leads.length === 0 && sourceFile && (
+          <div className="mb-3 text-xs text-slate-400">
+            No leads found in {sourceFile}.
+          </div>
+        )}
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           <StatCard 
@@ -76,10 +99,13 @@ export default function AdminPortal() {
           />
           <StatCard 
             icon={Calendar} 
-            label="Called Today" 
-            value={stats.callsToday} 
+            label="Calls / Hr" 
+            value={Number.isFinite(callsPerHour) ? callsPerHour.toFixed(1) : '0.0'} 
             color="blue"
           />
+        </div>
+        <div className="mb-4 text-xs text-slate-400">
+          Contact rate: {contactRate}% · {stats.callsToday} leads contacted today
         </div>
 
         {/* Filter Tabs & Actions */}
@@ -175,7 +201,7 @@ export default function AdminPortal() {
                             <div>
                               <p className="font-medium text-slate-800 text-sm">{lead.name}</p>
                               <p className="text-xs text-slate-400 truncate max-w-[150px] sm:max-w-[200px]">
-                                {lead.address}
+                                {lead.address || '—'}
                               </p>
                             </div>
                           </div>
@@ -184,7 +210,11 @@ export default function AdminPortal() {
                           <span className="text-sm text-slate-600">{formatPhone(lead.phone)}</span>
                         </td>
                         <td className="px-4 py-3 hidden md:table-cell">
-                          <span className="text-sm text-amber-600">⭐ {lead.rating}</span>
+                          {lead.rating ? (
+                            <span className="text-sm text-amber-600">⭐ {lead.rating}</span>
+                          ) : (
+                            <span className="text-sm text-slate-300">—</span>
+                          )}
                         </td>
                         <td className="px-4 py-3">
                           {called ? (

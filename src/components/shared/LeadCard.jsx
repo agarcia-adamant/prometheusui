@@ -39,16 +39,22 @@ export default function LeadCard({ lead, onCall, isCalled = false, showCallStatu
           </div>
           
           {/* Address & Rating */}
-          <div className="flex items-center gap-3 mt-1">
-            <div className="flex items-center gap-1 text-slate-400">
-              <MapPin className="w-3 h-3 flex-shrink-0" />
-              <span className="text-xs truncate max-w-[100px] sm:max-w-[180px] md:max-w-[250px]">{lead.address}</span>
+          {(lead.address || lead.rating) && (
+            <div className="flex items-center gap-3 mt-1">
+              {lead.address && (
+                <div className="flex items-center gap-1 text-slate-400">
+                  <MapPin className="w-3 h-3 flex-shrink-0" />
+                  <span className="text-xs truncate max-w-[100px] sm:max-w-[180px] md:max-w-[250px]">{lead.address}</span>
+                </div>
+              )}
+              {lead.rating && (
+                <div className="flex items-center gap-0.5 text-amber-500">
+                  <Star className="w-3 h-3 fill-amber-400" />
+                  <span className="text-xs font-medium">{lead.rating}</span>
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-0.5 text-amber-500">
-              <Star className="w-3 h-3 fill-amber-400" />
-              <span className="text-xs font-medium">{lead.rating}</span>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Call Icon */}

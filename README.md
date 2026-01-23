@@ -11,3 +11,19 @@ Currently, two official plugins are available:
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 # prometheusui
+
+## Supabase setup
+
+1. Create a Supabase project and run `supabase/schema.sql`.
+2. Add the client credentials to your local environment:
+
+```bash
+VITE_SUPABASE_URL=your-project-url
+VITE_SUPABASE_ANON_KEY=your-anon-key
+```
+
+The app will run without Supabase, but calls will only be tracked locally.
+
+## CSV source
+
+Set `ACTIVE_CSV` in `src/data/leadSource.js` to the CSV filename you want to use from `src/data`.

@@ -1,8 +1,10 @@
 export function formatPhone(phone) {
-  if (phone.length === 10) {
-    return `(${phone.slice(0, 3)}) ${phone.slice(3, 6)}-${phone.slice(6)}`;
+  if (!phone) return '';
+  const cleaned = phone.toString();
+  if (cleaned.length === 10) {
+    return `(${cleaned.slice(0, 3)}) ${cleaned.slice(3, 6)}-${cleaned.slice(6)}`;
   }
-  return phone;
+  return cleaned;
 }
 
 export function formatDate(isoString) {
@@ -16,6 +18,7 @@ export function formatDate(isoString) {
 }
 
 export function formatRelativeTime(isoString) {
+  if (!isoString) return '—';
   const date = new Date(isoString);
   const now = new Date();
   const diffMs = now - date;
